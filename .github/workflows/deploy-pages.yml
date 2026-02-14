@@ -31,6 +31,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # GitHub Pages URLs are lowercase: username.github.io/repo-name/
+          VITE_BASE: /${{ github.event.repository.name }}/ 
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

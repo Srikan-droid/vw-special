@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// base: './' so the build works on GitHub Pages (any repo path) and locally
+// VITE_BASE is set in GitHub Actions to /repo-name/ for Pages; default './' for local
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: process.env.VITE_BASE || './',
 })
