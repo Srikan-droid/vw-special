@@ -20,9 +20,10 @@ Edits in `src/` will hot-reload in the browser.
 
 This repo has a workflow that builds and deploys on every push to `main` or `master`.
 
-1. **Turn on Pages and set source to GitHub Actions**
+1. **Use GitHub Actions as the Pages source (important)**
    - Repo **Settings** → **Pages**
-   - Under **Build and deployment**, set **Source** to **GitHub Actions**.
+   - Under **Build and deployment**, set **Source** to **GitHub Actions** (not "Deploy from a branch").
+   - If you use "Deploy from a branch", the site will serve the raw source and you’ll see a 404 for `src/main.jsx` because the built app is only produced by the workflow.
 
 2. Push your code (including the `.github/workflows/deploy-pages.yml` file). The workflow will build the app and deploy the `dist` folder.
 
