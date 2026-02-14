@@ -1,0 +1,29 @@
+.love-card.card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 2rem;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(199, 107, 122, 0.2);
+  border: 1px solid rgba(232, 160, 168, 0.4);
+}
+
+.love-card h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  color: var(--rose-deep);
+  margin-bottom: 1rem;
+}
+
+.love-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.heart-big {
+  font-size: 3rem;
+  margin: 1rem 0;
+}
