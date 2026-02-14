@@ -16,18 +16,17 @@
 
 Edits in `src/` will hot-reload in the browser.
 
-## Build for GitHub Pages
+## GitHub Pages (automatic)
 
-1. Build:
-   ```bash
-   npm run build
-   ```
+This repo has a workflow that builds and deploys on every push to `main` or `master`.
 
-2. Deploy the **`dist`** folder to GitHub Pages:
-   - Either enable GitHub Pages for this repo and set the source to the `dist` folder (e.g. via a `gh-pages` branch or GitHub Actions),  
-   - Or copy the contents of `dist` into the root of a branch that GitHub Pages serves (e.g. `main` or `gh-pages`).
+1. **Turn on Pages and set source to GitHub Actions**
+   - Repo **Settings** → **Pages**
+   - Under **Build and deployment**, set **Source** to **GitHub Actions**.
 
-The app uses `base: './'`, so it works on any path (e.g. `username.github.io/repo-name/`).
+2. Push your code (including the `.github/workflows/deploy-pages.yml` file). The workflow will build the app and deploy the `dist` folder. Your site will be at `https://<username>.github.io/<repo-name>/`.
+
+The app uses `base: './'`, so it works on any path.
 
 ## Mobile
 
