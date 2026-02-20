@@ -111,14 +111,15 @@
 .game-player {
   position: absolute;
   bottom: 0.25rem;
+  left: 0;
   width: 80px;
   height: 76px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 3;
-  transition: left 0.08s ease-out;
   pointer-events: none;
+  will-change: transform;
 }
 
 .player-character {

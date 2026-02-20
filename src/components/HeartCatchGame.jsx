@@ -25,41 +25,38 @@ function HeartCatchGame({ onWin }) {
   const [score, setScore] = useState(0)
   const [lives, setLives] = useState(LIVES)
   const [items, setItems] = useState([])
-  const [playerX, setPlayerX] = useState(50)
   const [gameOver, setGameOver] = useState(null)
   const [started, setStarted] = useState(false)
   const containerRef = useRef(null)
   const playerRef = useRef(null)
   const itemsRef = useRef([])
-  const lastSpawnRef = useRef(0)
+  const playerXRef = useRef(50)
   const rafRef = useRef(null)
 
-  const getContainerBounds = useCallback(() => {
-    if (!containerRef.current) return { width: 300, left: 0 }
-    const rect = containerRef.current.getBoundingClientRect()
-    return { width: rect.width, left: rect.left }
-  }, [])
-
-  const handlePointer = useCallback((clientX) => {
-    const { width, left } = getContainerBounds()
-    const x = clientX - left
-    const half = PLAYER_WIDTH / 2
-    const percent = Math.max(0, Math.min(100, ((x - half) / (width - PLAYER_WIDTH)) * 100))
-    setPlayerX(percent)
-  }, [getContainerBounds])
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container) return
+    if (!container || !playerRef.current) return
+
+    const updatePosition = (clientX) => {
+      const rect = container.getBoundingClientRect()
+      const percent = Math.max(0, Math.min(100, ((clientX - rect.left - PLAYER_WIDTH / 2) / (rect.width - PLAYER_WIDTH)) * 100))
+      playerXRef.current = percent
+      const px = (percent / 100) * (rect.width - PLAYER_WIDTH)
+      playerRef.current.style.transform = `translateX(${px}px)`
+    }
 
     const onMove = (e) => {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX
-      handlePointer(clientX)
+      updatePosition(e.touches ? e.touches[0].clientX : e.clientX)
     }
     const onTouch = (e) => {
       e.preventDefault()
-      if (e.touches.length) handlePointer(e.touches[0].clientX)
+      if (e.touches.length) updatePosition(e.touches[0].clientX)
     }
+
+    const rect = container.getBoundingClientRect()
+    const initialPx = (50 / 100) * (rect.width - PLAYER_WIDTH)
+    playerRef.current.style.transform = `translateX(${initialPx}px)`
 
     container.addEventListener('mousemove', onMove)
     container.addEventListener('touchmove', onTouch, { passive: false })
@@ -69,7 +66,7 @@ function HeartCatchGame({ onWin }) {
       container.removeEventListener('touchmove', onTouch)
       container.removeEventListener('touchstart', onTouch)
     }
-  }, [handlePointer])
+  }, [])
 
   useEffect(() => {
     itemsRef.current = items
@@ -86,7 +83,7 @@ function HeartCatchGame({ onWin }) {
 
       const prev = itemsRef.current
       const bounds = containerRef.current?.getBoundingClientRect()
-      const px = bounds ? (playerX / 100) * (bounds.width - PLAYER_WIDTH) : 0
+      const px = bounds ? (playerXRef.current / 100) * (bounds.width - PLAYER_WIDTH) : 0
 
       let scoreDelta = 0
       let lifeDelta = 0
@@ -122,7 +119,7 @@ const overlap =
 
     rafRef.current = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [gameOver, started, playerX])
+  }, [gameOver, started])
 
   useEffect(() => {
     if (gameOver || !started) return
@@ -225,7 +222,7 @@ const overlap =
       <div
         className="game-player"
         ref={playerRef}
-        style={{ left: `calc(${playerX}% - ${PLAYER_WIDTH / 2}px)` }}
+        style={{ left: 0, transform: 'translateX(0)' }}
       >
         <div className="player-character" aria-hidden="true">
           <svg viewBox="0 0 80 76" className="player-svg">

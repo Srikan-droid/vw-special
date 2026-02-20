@@ -9,8 +9,8 @@ const SUCCESS_MESSAGES = [
   'one more time ....pleaseeee',
 ]
 
-function Landing({ onComplete }) {
-  const [introDone, setIntroDone] = useState(false)
+function Landing({ onComplete, skipIntro = false }) {
+  const [introDone, setIntroDone] = useState(skipIntro)
   const [count, setCount] = useState(0)
   const [feedback, setFeedback] = useState('')
   const [listening, setListening] = useState(false)
