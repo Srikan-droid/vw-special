@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
+import Intro from './Intro'
 import './Landing.css'
 
 const NEEDED = 3
@@ -9,6 +10,7 @@ const SUCCESS_MESSAGES = [
 ]
 
 function Landing({ onComplete }) {
+  const [introDone, setIntroDone] = useState(false)
   const [count, setCount] = useState(0)
   const [feedback, setFeedback] = useState('')
   const [listening, setListening] = useState(false)
@@ -115,6 +117,10 @@ function Landing({ onComplete }) {
   }
 
   const micEscapeClass = escapeTaps === 1 ? 'mic-escape-right' : escapeTaps === 2 ? 'mic-escape-left' : ''
+
+  if (!introDone) {
+    return <Intro onComplete={() => setIntroDone(true)} />
+  }
 
   return (
     <>
