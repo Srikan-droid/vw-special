@@ -5,8 +5,18 @@ import Landing from './components/Landing'
 import HeartCatchGame from './components/HeartCatchGame'
 import LovePage from './components/LovePage'
 
+function getInitialPhase() {
+  if (typeof window === 'undefined') return 'intro'
+  const hash = window.location.hash.toLowerCase()
+  const params = new URLSearchParams(window.location.search)
+  if (hash === '#gallery' || params.get('gallery') === '1' || params.get('gallery') === 'true') {
+    return 'love'
+  }
+  return 'intro'
+}
+
 function App() {
-  const [phase, setPhase] = useState('intro') // intro → quiz → mic → game → love
+  const [phase, setPhase] = useState(getInitialPhase) // intro → quiz → mic → game → love
 
   return phase === 'love' ? (
     <LovePage />

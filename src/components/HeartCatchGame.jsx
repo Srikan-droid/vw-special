@@ -164,8 +164,7 @@ const overlap =
     return (
       <div className="game-screen game-result">
         <div className="result-card result-win">
-          <h2>You did it! 💕</h2>
-          <p>You caught {score} hearts. I'm so proud of you!</p>
+          <h2>Lessssssssfuckingoooooo</h2>
           <button type="button" className="result-btn" onClick={onWin}>
             Continue →
           </button>
