@@ -329,14 +329,22 @@
   transform: scale(0.98);
 }
 
-.love-footer {
-  text-align: center;
-  padding: 2rem 1rem;
+/* Note image after song ends (media 1) */
+.love-note-wrap {
+  max-width: 92vw;
+  max-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
 }
 
-.love-footer p {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  color: var(--rose-deep);
-  margin: 0;
+.love-note-img {
+  max-width: 100%;
+  max-height: 75vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }

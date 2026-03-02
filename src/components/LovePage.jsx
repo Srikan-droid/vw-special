@@ -31,11 +31,14 @@ const PHOTOS = [
 // Display order: media(1) in center → [2,3,4, 5,1,6, 7]
 const DISPLAY_ORDER = [1, 2, 3, 4, 0, 5, 6]
 
+const getNoteImgSrc = () => withBase('resources/Note.png')
+
 function LovePage() {
   const [loaded, setLoaded] = useState({})
   const [triedPng, setTriedPng] = useState({})
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const audioRef = useRef(null)
+  const [showNote, setShowNote] = useState(false)
 
   const handleLoad = (i) => setLoaded((p) => ({ ...p, [i]: true }))
   const handleError = (i) => {
@@ -44,6 +47,7 @@ function LovePage() {
 
   const openLightbox = (photoIndex) => {
     setLightboxIndex(photoIndex)
+    setShowNote(false)
   }
 
   const closeLightbox = () => {
@@ -52,6 +56,7 @@ function LovePage() {
       audioRef.current.pause()
       audioRef.current.currentTime = 0
     }
+    setShowNote(false)
   }
 
   useEffect(() => {
@@ -64,22 +69,42 @@ function LovePage() {
     })
   }, [lightboxIndex])
 
+  const handleSongEnd = () => {
+    if (lightboxIndex !== 0) return
+    setShowNote(true)
+  }
+
   const renderLightbox = () => {
     if (lightboxIndex == null) return null
     const photo = PHOTOS[lightboxIndex]
     const usePng = triedPng[lightboxIndex]
     const imgSrc = getImgSrc(photo.n, usePng ? 'png' : 'jpg')
     const songSrc = getSongSrc(photo.n)
+    const showNoteOnly = photo.n === 1 && showNote
 
     return (
       <div className="love-lightbox-overlay" onClick={closeLightbox}>
         <div className="love-lightbox" onClick={(e) => e.stopPropagation()}>
-          <div className="love-lightbox-frame">
-            <div className="love-lightbox-vignette" aria-hidden="true" />
-            <img src={imgSrc} alt="" className="love-lightbox-img" />
-            <div className="love-lightbox-scan" aria-hidden="true" />
-          </div>
-          <audio ref={audioRef} src={songSrc} controls className="love-lightbox-audio" />
+          {showNoteOnly ? (
+            <div className="love-note-wrap">
+              <img src={getNoteImgSrc()} alt="Note" className="love-note-img" />
+            </div>
+          ) : (
+            <>
+              <div className="love-lightbox-frame">
+                <div className="love-lightbox-vignette" aria-hidden="true" />
+                <img src={imgSrc} alt="" className="love-lightbox-img" />
+                <div className="love-lightbox-scan" aria-hidden="true" />
+              </div>
+              <audio
+                ref={audioRef}
+                src={songSrc}
+                controls
+                className="love-lightbox-audio"
+                onEnded={photo.n === 1 ? handleSongEnd : undefined}
+              />
+            </>
+          )}
           <button type="button" className="love-lightbox-close" onClick={closeLightbox}>
             Close
           </button>
@@ -91,8 +116,8 @@ function LovePage() {
   return (
     <div className="love-page">
       <header className="love-header">
-        <h1>Us 💕</h1>
-        <p className="love-sub">Some of our favourite moments</p>
+        <h1>You and I 💕</h1>
+        
       </header>
 
       <div className="love-gallery">
@@ -138,10 +163,6 @@ function LovePage() {
       </div>
 
       {renderLightbox()}
-
-      <footer className="love-footer">
-        <p>Happy Valentine’s Week, Guluru. 💕</p>
-      </footer>
     </div>
   )
 }
