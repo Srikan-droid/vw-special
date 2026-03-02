@@ -63,7 +63,7 @@ function Landing({ onComplete, skipIntro = false }) {
           setCount((prev) => {
             const newCount = prev + 1
             if (newCount >= NEEDED) {
-              setFeedback('I love you too, Guluru💕')
+              setFeedback('I love you too, Begunia💕')
               try { recognition.stop() } catch (_) {}
               setTimeout(onComplete, 1200)
             } else {
@@ -142,7 +142,7 @@ function Landing({ onComplete, skipIntro = false }) {
       {showPopup && (
         <div className="popup-overlay" onClick={dismissPopup}>
           <div className="popup-card" onClick={(e) => e.stopPropagation()}>
-            <p className="popup-text">Umm what's taking you long?</p>
+            <p className="popup-text">Umm what's taking you so long?</p>
             <button type="button" className="popup-btn" onClick={dismissPopup}>
               I'm trying 😢
             </button>

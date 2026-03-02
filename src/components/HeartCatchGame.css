@@ -167,9 +167,16 @@
 
 .result-card h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: var(--rose-deep, #c76b7a);
   margin-bottom: 0.75rem;
+  word-break: break-word;
+}
+
+@media (min-width: 480px) {
+  .result-card h2 {
+    font-size: 1.6rem;
+  }
 }
 
 .result-card p {
