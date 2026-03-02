@@ -4,7 +4,7 @@ import './Quiz.css'
 const QUESTIONS = [
   {
     id: 1,
-    text: 'Husband : Wife :: ______ : Guluru',
+    text: 'Boyfriend : Girlfriend :: ______ : Guluru',
     answers: ['kindu'],
     feedback: "That was easy, next question.....",
   },

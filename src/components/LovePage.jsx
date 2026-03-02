@@ -1,14 +1,23 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './LovePage.css'
 
-// Public folder: Vite serves it at root. Use base so it works on GitHub Pages too.
+// Public folder helpers for images + songs (works with base on GitHub Pages)
 const BASE = import.meta.env.BASE_URL
-const getImgSrc = (n, ext = 'jpg') => {
-  const name = `media(${n}).${ext}`
-  const path = `resources/${encodeURIComponent(name)}`
-  const base = BASE.endsWith('/') ? BASE : BASE + '/'
+const withBase = (path) => {
+  const base = BASE.endsWith('/') ? BASE : `${BASE}/`
   return `${base}${path}`
 }
+
+const getImgSrc = (n, ext = 'jpg') => {
+  const name = `media(${n}).${ext}`
+  return withBase(`resources/${encodeURIComponent(name)}`)
+}
+
+const getSongSrc = (n, ext = 'mp3') => {
+  const name = `song(${n}).${ext}`
+  return withBase(`resources/${encodeURIComponent(name)}`)
+}
+
 const PHOTOS = [
   { alt: 'Memory 1', n: 1 },
   { alt: 'Memory 2', n: 2 },
@@ -18,16 +27,65 @@ const PHOTOS = [
   { alt: 'Memory 6', n: 6 },
   { alt: 'Memory 7', n: 7 },
 ]
+
 // Display order: media(1) in center → [2,3,4, 5,1,6, 7]
 const DISPLAY_ORDER = [1, 2, 3, 4, 0, 5, 6]
 
 function LovePage() {
   const [loaded, setLoaded] = useState({})
   const [triedPng, setTriedPng] = useState({})
+  const [lightboxIndex, setLightboxIndex] = useState(null)
+  const audioRef = useRef(null)
 
   const handleLoad = (i) => setLoaded((p) => ({ ...p, [i]: true }))
   const handleError = (i) => {
     setTriedPng((p) => ({ ...p, [i]: true }))
+  }
+
+  const openLightbox = (photoIndex) => {
+    setLightboxIndex(photoIndex)
+  }
+
+  const closeLightbox = () => {
+    setLightboxIndex(null)
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+  }
+
+  useEffect(() => {
+    if (lightboxIndex == null) return
+    const audio = audioRef.current
+    if (!audio) return
+    audio.currentTime = 0
+    audio.play().catch(() => {
+      // autoplay might be blocked; user can tap play in controls if needed
+    })
+  }, [lightboxIndex])
+
+  const renderLightbox = () => {
+    if (lightboxIndex == null) return null
+    const photo = PHOTOS[lightboxIndex]
+    const usePng = triedPng[lightboxIndex]
+    const imgSrc = getImgSrc(photo.n, usePng ? 'png' : 'jpg')
+    const songSrc = getSongSrc(photo.n)
+
+    return (
+      <div className="love-lightbox-overlay" onClick={closeLightbox}>
+        <div className="love-lightbox" onClick={(e) => e.stopPropagation()}>
+          <div className="love-lightbox-frame">
+            <div className="love-lightbox-vignette" aria-hidden="true" />
+            <img src={imgSrc} alt="" className="love-lightbox-img" />
+            <div className="love-lightbox-scan" aria-hidden="true" />
+          </div>
+          <audio ref={audioRef} src={songSrc} controls className="love-lightbox-audio" />
+          <button type="button" className="love-lightbox-close" onClick={closeLightbox}>
+            Close
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -43,11 +101,19 @@ function LovePage() {
           const isCenter = photoIndex === 0
           const usePng = triedPng[photoIndex]
           const src = getImgSrc(photo.n, usePng ? 'png' : 'jpg')
+          const rotate = isCenter ? '0deg' : `${[-2, 3, -1, 2, 1, -3, 2][i]}deg`
+
           return (
             <div
               key={`${photoIndex}-${usePng ? 'png' : 'jpg'}`}
               className={`love-polaroid ${isCenter ? 'love-polaroid--center' : ''} ${loaded[photoIndex] ? 'love-polaroid--visible' : ''}`}
-              style={{ '--rotate': isCenter ? '0deg' : `${[-2, 3, -1, 2, 1, -3, 2][i]}deg`, '--delay': `${i * 0.08}s` }}
+              style={{ '--rotate': rotate, '--delay': `${i * 0.08}s` }}
+              onClick={() => openLightbox(photoIndex)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') openLightbox(photoIndex)
+              }}
             >
               <div className="love-polaroid-inner">
                 <img
@@ -70,6 +136,8 @@ function LovePage() {
           )
         })}
       </div>
+
+      {renderLightbox()}
 
       <footer className="love-footer">
         <p>Happy Valentine’s Week, Guluru. 💕</p>
