@@ -160,17 +160,32 @@ const overlap =
     setStarted(true)
   }
 
+  const handleContinue = (e) => {
+    if (e && e.type === 'touchend') e.preventDefault()
+    onWin?.()
+  }
+
   if (gameOver === 'win') {
     return (
       <div className="game-screen game-result">
         <div className="result-card result-win">
           <h2>Lessssssssfuckingoooooo</h2>
-          <button type="button" className="result-btn" onClick={onWin}>
+          <button
+            type="button"
+            className="result-btn"
+            onClick={handleContinue}
+            onTouchEnd={handleContinue}
+          >
             Continue →
           </button>
         </div>
       </div>
     )
+  }
+
+  const handleTryAgain = (e) => {
+    if (e && e.type === 'touchend') e.preventDefault()
+    handlePlayAgain()
   }
 
   if (gameOver === 'lose') {
@@ -179,7 +194,12 @@ const overlap =
         <div className="result-card result-lose">
           <h2>Oops! 😢</h2>
           <p>You caught {score} hearts. Try again?</p>
-          <button type="button" className="result-btn" onClick={handlePlayAgain}>
+          <button
+            type="button"
+            className="result-btn"
+            onClick={handleTryAgain}
+            onTouchEnd={handleTryAgain}
+          >
             Try again
           </button>
         </div>
