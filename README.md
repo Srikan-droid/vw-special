@@ -1,4 +1,8 @@
-# Valentine's Week — React
+# I'm Sorry, Guluru 🥺 — React
+
+A one-screen mobile game: tap the floating gifts to stitch a broken heart back together (12 stitches), watch the storm clear, then answer one very important question.
+
+Everything lives in `src/components/SorryGame.jsx` (apology lines, letter text and tuning constants are at the top of the file).
 
 ## Run locally
 
@@ -12,7 +16,7 @@
    npm run dev
    ```
 
-3. Open **http://localhost:5173** in your browser (Chrome recommended for the "say I love you" voice feature).
+3. Open **http://localhost:5173** in your browser.
 
 Edits in `src/` will hot-reload in the browser.
 
@@ -29,4 +33,4 @@ A workflow builds the app and pushes the **built** files to the **gh-pages** bra
 
 ## Mobile
 
-React does not change how the site works on phones. The Web Speech API and layout behave the same; use Chrome on mobile for the best voice experience.
+Built for phones first: tap targets, safe-area padding, and light vibration feedback (on Android).
