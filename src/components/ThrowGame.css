@@ -227,31 +227,6 @@
   }
 }
 
-.tg-prompt {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  z-index: 5;
-  padding: 12px 22px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 30px rgba(255, 120, 170, 0.7);
-  color: #c2185b;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
-  font-weight: 600;
-  white-space: nowrap;
-  transform: translateX(-50%);
-  pointer-events: none;
-  animation: tg-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes tg-pulse {
-  50% {
-    transform: translateX(-50%) scale(1.06);
-  }
-}
-
 .tg-banner {
   position: absolute;
   top: 34%;

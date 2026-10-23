@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import { LEVELS, ALIVA_LINES, REFILL_LINE, FINALE } from './levels'
+import { LEVELS, ALIVA_LINES, REFILL_LINE, KO } from './levels'
 import { sfx } from './audio'
 import { render } from './render'
 
@@ -53,7 +53,6 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     aim: null,
     drag: null,
     active: null,
-    heart: null,
     shake: 0,
     slowmo: 0,
     settle: 0,
@@ -123,30 +122,6 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     g.particles.push({ kind: 'pop', text, x, y, vx: 0, vy: -40, life: 1, max: 1, size, color, grav: 0, rot: (Math.random() - 0.5) * 0.4 })
   }
 
-  function firework() {
-    const x = lerp(g.x0 + 40, g.x1 - 40, Math.random())
-    const y = g.groundY * (0.15 + Math.random() * 0.35)
-    const color = pick(['#ff7aa2', '#ffd166', '#8be9fd', '#c084fc', '#ffffff', '#ff9f68'])
-    const heart = Math.random() < 0.45
-    const n = 40
-    for (let i = 0; i < n; i++) {
-      let vx
-      let vy
-      if (heart) {
-        const a = (i / n) * Math.PI * 2
-        vx = 16 * Math.sin(a) ** 3 * 9
-        vy = -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * 9
-      } else {
-        const a = Math.random() * Math.PI * 2
-        const s = 80 + Math.random() * 180
-        vx = Math.cos(a) * s
-        vy = Math.sin(a) * s
-      }
-      g.particles.push({ kind: 'dot', x, y, vx, vy, life: 1.6, max: 1.6, size: 4.5, color, grav: 60, drag: 0.985 })
-    }
-    sfx.firework()
-  }
-
   function emitState() {
     const L = LEVELS[g.level]
     emit('state', {
@@ -168,7 +143,6 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     g.blocks = []
     g.projectiles = []
     g.active = null
-    g.heart = null
   }
 
   function buildLevel(i) {
@@ -192,7 +166,7 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     const s = L.srikant
     const body = Bodies.rectangle(s.x, gy - s.yb - 27, 30, 54, { density: 0.0018, friction: 0.9, chamfer: { radius: 10 }, label: 'srikant' })
     Composite.add(world, body)
-    g.srikant = { body, x0: s.x, mood: 'peek', headphones: !!s.headphones, bumps: g.totalBumps, dizzyT: 0, hitT: 0, cool: 0, sign: null, bandaged: false }
+    g.srikant = { body, x0: s.x, mood: 'peek', headphones: !!s.headphones, bumps: g.totalBumps, dizzyT: 0, hitT: 0, cool: 0, fly: null, ko: false }
     g.queue = [...L.ammo]
     g.nextType = g.queue[0]
     g.bonks = 0
@@ -299,7 +273,7 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     }
   })
 
-  // Freeze Srikant upright in front of the fort for the outro / finale
+  // Freeze Srikant upright in front of the fort for the between-level outro
   function standSrikant(mood) {
     const sk = g.srikant
     Body.setStatic(sk.body, true)
@@ -318,18 +292,18 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     g.aim = null
     g.drag = null
     sfx.cheer()
+    if (g.level === LEVELS.length - 1) {
+      later(0.5, knockout)
+      return
+    }
     later(1.1, () => {
       standSrikant('flag')
       say(L.outro, 2.6)
     })
     later(3.9, () => {
-      if (g.level < LEVELS.length - 1) {
-        const next = LEVELS[g.level + 1]
-        emit('banner', { level: g.level + 2, name: next.name, sub: next.sub })
-        later(2.2, () => startLevel(g.level + 1))
-      } else {
-        startFinale()
-      }
+      const next = LEVELS[g.level + 1]
+      emit('banner', { level: g.level + 2, name: next.name, sub: next.sub })
+      later(2.2, () => startLevel(g.level + 1))
     })
   }
 
@@ -364,12 +338,6 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
     g.stats.thrown++
     sfx.whoosh()
     emit('thrown')
-    if (type === 'heart') {
-      g.heart = { x: h.x, y: h.y, vx, vy, t: 0 }
-      g.phase = 'heart'
-      emit('phase', 'heart')
-      return
-    }
     const body = THROW_BODY[type](h.x, h.y)
     body.label = 'proj'
     body.frictionAir = 0
@@ -409,7 +377,7 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
   }
 
   const onDown = (e) => {
-    if (!g.ready || (g.phase !== 'play' && g.phase !== 'finale')) return
+    if (!g.ready || g.phase !== 'play') return
     e.preventDefault()
     canvas.setPointerCapture?.(e.pointerId)
     g.drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY }
@@ -436,80 +404,66 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
   canvas.addEventListener('pointerup', onUp)
   canvas.addEventListener('pointercancel', onUp)
 
-  // ---------- finale ----------
+  // ---------- knockout ending ----------
 
-  function startFinale() {
-    g.phase = 'finale-intro'
+  function knockout() {
+    g.phase = 'ko'
     g.skyTarget = 3
     const sk = g.srikant
     sk.headphones = false
-    sk.bandaged = true
-    sk.sign = FINALE.sign
-    // whatever is left of his flaws crumbles away
-    g.blocks.forEach((b, i) => later(i * 0.12, () => !b.dead && shatter(b)))
     for (const p of g.projectiles) {
       burst(p.body.position.x, p.body.position.y, '#ffffff', 6, 120)
       Composite.remove(world, p.body)
     }
     g.projectiles = []
     g.active = null
-    standSrikant('sign')
-    Body.setPosition(sk.body, { x: 440, y: g.groundY - 27 })
-    say(FINALE.line, 3.2)
-    g.aliva.mood = 'smug'
-    emit('toast', FINALE.toast)
-    later(2.2, () => {
-      g.phase = 'finale'
-      g.queue = ['heart']
-      g.nextType = 'heart'
-      g.ready = true
-      emit('phase', 'finale')
-    })
-  }
-
-  function caught() {
-    const sk = g.srikant
+    Body.setStatic(sk.body, true)
+    sk.body.isSensor = true
     const { x, y } = sk.body.position
-    g.heart = null
-    g.phase = 'forgiven'
-    sk.mood = 'caught'
-    g.aliva.mood = 'soft'
-    g.fwT = 0
-    sfx.win()
-    buzz([40, 60, 40, 60, 140])
-    for (let i = 0; i < 18; i++) {
-      const a = Math.random() * Math.PI * 2
-      const s = 120 + Math.random() * 160
-      g.particles.push({ kind: 'heart', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 80, life: 1.2, max: 1.2, size: 12 + Math.random() * 8, color: pick(['#ff7aa2', '#ff4d7d', '#ffb3c7']), grav: 200 })
-    }
-    say(FINALE.caughtLine, 3.2)
-    later(1.2, () => say(FINALE.alivaLine, 3.2, 'aliva'))
-    later(3.8, () => emit('done', { ...g.stats }))
-    emit('phase', 'forgiven')
+    sk.fly = { t: 0, x0: x, y0: y, a0: sk.body.angle, landed: false }
+    sk.mood = 'hit'
+    sk.hitT = 0
+    sk.dizzyT = 0
+    say(KO.flyLine, 1.1)
+    sfx.whoosh()
+    // what's left of the fort crumbles while he's airborne
+    g.blocks.forEach((b, i) => later(0.3 + i * 0.1, () => !b.dead && shatter(b)))
+    emit('phase', 'ko')
   }
 
-  function updateHeart(dt) {
-    const h = g.heart
-    const steps = dt * 60
-    h.t += dt
-    const sk = g.srikant.body.position
-    const tx = sk.x - 4
-    const ty = sk.y + 2
-    if (h.t > 0.2) {
-      // gently home in so the heart always reaches him
-      const dx = tx - h.x
-      const dy = ty - h.y
-      const d = Math.hypot(dx, dy) || 1
-      const k = Math.min(1, dt * (1 + h.t * 4))
-      h.vx = lerp(h.vx, (dx / d) * 9, k)
-      h.vy = lerp(h.vy, (dy / d) * 9, k)
-    } else {
-      h.vy += GRAVITY_PER_STEP * steps
-    }
-    h.x += h.vx * steps
-    h.y += h.vy * steps
-    if (Math.random() < 0.6) g.particles.push({ kind: 'heart', x: h.x, y: h.y, vx: 0, vy: 20, life: 0.5, max: 0.5, size: 8, color: '#ff9ab3', grav: 0 })
-    if (Math.hypot(tx - h.x, ty - h.y) < 20) caught()
+  // He sails up, spins and plants head-first into the ground
+  function updateFly(dt) {
+    const sk = g.srikant
+    const f = sk.fly
+    f.t += dt
+    const u = Math.min(1, f.t / 1.1)
+    const x = lerp(f.x0, 430, u)
+    const y = lerp(f.y0, g.groundY - 22, u) - Math.sin(u * Math.PI) * 220
+    Body.setPosition(sk.body, { x, y })
+    Body.setAngle(sk.body, lerp(f.a0, Math.PI * 3, u))
+    if (u < 1 || f.landed) return
+    f.landed = true
+    sk.ko = true
+    sk.mood = 'dizzy'
+    sk.dizzyT = Infinity
+    g.shake = 0.7
+    g.slowmo = 0.3
+    sfx.bonk()
+    sfx.crash()
+    buzz([60, 40, 120])
+    burst(430, g.groundY - 4, '#b07a52', 20, 260, 'shard')
+    burst(430, g.groundY - 10, '#ffd166', 10, 220, 'star')
+    g.particles.push({ kind: 'pop', text: KO.pop, x: 280, y: g.groundY - 250, vx: 0, vy: -10, life: 2.6, max: 2.6, size: 72, color: '#ffd166', grav: 0, rot: -0.12 })
+    emit('toast', KO.toast)
+    later(0.9, () => say(KO.srikantLine, 3.2))
+    later(1.6, () => {
+      g.aliva.mood = 'smug'
+      say(KO.alivaLine, 2.8, 'aliva')
+    })
+    later(3.4, () => {
+      g.aliva.mood = 'soft'
+    })
+    later(4.2, () => emit('done', { ...g.stats }))
   }
 
   // ---------- update ----------
@@ -583,9 +537,9 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
       }
     }
 
-    if (g.heart) updateHeart(dt)
+    if (g.srikant.fly) updateFly(dt)
 
-    if (autoplay && g.ready && !g.drag && (g.phase === 'play' || g.phase === 'finale') && g.handPos) {
+    if (autoplay && g.ready && !g.drag && g.phase === 'play' && g.handPos) {
       g.autoT = (g.autoT || 0) + dt
       if (g.autoT > 0.7) {
         g.autoT = 0
@@ -598,14 +552,6 @@ export function createGame(canvas, emit, { autoplay = false } = {}) {
       if (g.chatT <= 0) {
         g.chatT = 5
         say(pick(['…hi? 😅', 'please be gentle 🥺', '*hides behind excuses*']), 2.2)
-      }
-    }
-
-    if (g.phase === 'forgiven') {
-      g.fwT -= dt
-      if (g.fwT <= 0) {
-        g.fwT = 0.35 + Math.random() * 0.5
-        firework()
       }
     }
 

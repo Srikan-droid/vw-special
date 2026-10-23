@@ -1,4 +1,4 @@
-import { circle, poly, stroke, arc, rrect, heartPath, star, FONT, TAU } from './draw-utils'
+import { circle, poly, stroke, arc, rrect, heartPath, star, TAU } from './draw-utils'
 
 const INK = '#2b1d1a'
 const SKIN = '#f5cba7'
@@ -10,12 +10,13 @@ export function drawSrikant(ctx, s, t) {
   ctx.rotate(s.angle)
   const m = s.mood
 
-  // legs + shoes
+  // legs + shoes (kicking helplessly once he's head-first in the ground)
+  const kick = s.ko ? Math.sin(t * 16) * 4 : 0
   ctx.fillStyle = '#2f3a5a'
-  ctx.fillRect(-8, 12, 6, 13)
-  ctx.fillRect(2, 12, 6, 13)
-  circle(ctx, -7, 26, 4, '#ff5a5f')
-  circle(ctx, 3, 26, 4, '#ff5a5f')
+  ctx.fillRect(-8, 12, 6, 13 + kick)
+  ctx.fillRect(2, 12, 6, 13 - kick)
+  circle(ctx, -7, 26 + kick, 4, '#ff5a5f')
+  circle(ctx, 3, 26 - kick, 4, '#ff5a5f')
 
   // hoodie
   ctx.fillStyle = '#5b7cfa'
@@ -55,21 +56,6 @@ export function drawSrikant(ctx, s, t) {
   ctx.fill()
   poly(ctx, [hx + 10, hy - 9, hx + 19, hy - 13, hx + 13, hy - 2], INK)
 
-  if (s.bandaged) {
-    ctx.save()
-    ctx.translate(hx - 2, hy - 8)
-    ctx.rotate(-0.35)
-    ctx.fillStyle = '#fff6ea'
-    ctx.fillRect(-9, -2.5, 18, 5)
-    ctx.restore()
-    ctx.save()
-    ctx.translate(hx - 2, hy - 8)
-    ctx.rotate(0.35)
-    ctx.fillStyle = '#fff6ea'
-    ctx.fillRect(-9, -2.5, 18, 5)
-    ctx.restore()
-  }
-
   // bumps from bonks
   const bumps = Math.min(3, s.bumps || 0)
   const spots = [[-3, hy - 13], [5, hy - 14], [1, hy - 17]]
@@ -90,32 +76,28 @@ export function drawSrikant(ctx, s, t) {
   } else if (m === 'dizzy') {
     for (const [x, y] of [e1, e2]) arc(ctx, x, y, 2.2, t * 12, t * 12 + Math.PI * 1.5, INK, 1.3)
     arc(ctx, hx - 6, hy + 6, 2.4, Math.PI * 1.1, Math.PI * 1.9, '#7a2e2e', 1.4)
-  } else if (m === 'caught' || m === 'flag') {
+  } else if (m === 'flag') {
     for (const [x, y] of [e1, e2]) arc(ctx, x, y + 1, 2.4, Math.PI * 1.1, Math.PI * 1.9, INK, 1.6)
-    arc(ctx, hx - 6, hy + 4, m === 'caught' ? 4 : 3, Math.PI * 0.15, Math.PI * 0.85, '#7a2e2e', 1.5)
+    arc(ctx, hx - 6, hy + 4, 3, Math.PI * 0.15, Math.PI * 0.85, '#7a2e2e', 1.5)
   } else {
-    // peek / sign: big puppy eyes
-    const big = m === 'sign' ? 3 : 2.2
+    // peek: big puppy eyes
     for (const [x, y] of [e1, e2]) {
-      circle(ctx, x, y, big, INK)
-      circle(ctx, x - 0.7, y - 0.9, big * 0.38, '#fff')
+      circle(ctx, x, y, 2.2, INK)
+      circle(ctx, x - 0.7, y - 0.9, 0.85, '#fff')
     }
     stroke(ctx, [e1[0] - 2.5, e1[1] - 4, e1[0] + 2, e1[1] - 5.5], INK, 1.2)
     stroke(ctx, [e2[0] + 2.5, e2[1] - 4, e2[0] - 2, e2[1] - 5.5], INK, 1.2)
-    if (m === 'sign') arc(ctx, hx - 6, hy + 8, 2.6, Math.PI * 1.15, Math.PI * 1.85, '#7a2e2e', 1.4)
-    else {
-      stroke(ctx, [hx - 9, hy + 6, hx - 7, hy + 5, hx - 5, hy + 6, hx - 3, hy + 5], '#7a2e2e', 1.2)
-      // nervous sweat drop
-      const d = (t * 0.8) % 1
-      ctx.globalAlpha = 1 - d
-      ctx.fillStyle = '#8ecae6'
-      ctx.beginPath()
-      ctx.moveTo(hx + 7, hy - 9 + d * 8)
-      ctx.quadraticCurveTo(hx + 4, hy - 4 + d * 8, hx + 7, hy - 3 + d * 8)
-      ctx.quadraticCurveTo(hx + 10, hy - 4 + d * 8, hx + 7, hy - 9 + d * 8)
-      ctx.fill()
-      ctx.globalAlpha = 1
-    }
+    stroke(ctx, [hx - 9, hy + 6, hx - 7, hy + 5, hx - 5, hy + 6, hx - 3, hy + 5], '#7a2e2e', 1.2)
+    // nervous sweat drop
+    const d = (t * 0.8) % 1
+    ctx.globalAlpha = 1 - d
+    ctx.fillStyle = '#8ecae6'
+    ctx.beginPath()
+    ctx.moveTo(hx + 7, hy - 9 + d * 8)
+    ctx.quadraticCurveTo(hx + 4, hy - 4 + d * 8, hx + 7, hy - 3 + d * 8)
+    ctx.quadraticCurveTo(hx + 10, hy - 4 + d * 8, hx + 7, hy - 9 + d * 8)
+    ctx.fill()
+    ctx.globalAlpha = 1
   }
   ctx.globalAlpha = 0.55
   circle(ctx, hx - 11, hy + 4, 2.6, '#ff8fa3')
@@ -130,40 +112,20 @@ export function drawSrikant(ctx, s, t) {
     ctx.fill()
   }
 
-  // hands / props
-  if (m === 'sign') {
-    ctx.fillStyle = '#fffaf0'
-    rrect(ctx, -34, -2, 68, 30, 6)
-    ctx.fill()
-    ctx.strokeStyle = '#c2566a'
-    ctx.lineWidth = 2
-    ctx.stroke()
-    ctx.fillStyle = '#c2566a'
-    ctx.font = `800 10px ${FONT}`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(s.sign[0], 0, 7)
-    ctx.fillText(s.sign[1], 0, 19)
-    circle(ctx, -30, 2, 4, SKIN)
-    circle(ctx, 30, 2, 4, SKIN)
-  } else if (m === 'caught') {
-    ctx.fillStyle = '#ff4d7d'
-    heartPath(ctx, -4, 4, 20)
-    ctx.fill()
-    circle(ctx, -12, 6, 3.6, SKIN)
-    circle(ctx, 4, 6, 3.6, SKIN)
-  } else if (m !== 'flag') {
+  // hands
+  if (m !== 'flag') {
     circle(ctx, -11, -1, 3.6, SKIN)
     circle(ctx, -4, 1, 3.6, SKIN)
   }
 
   ctx.restore()
 
-  // dizzy stars orbit (screen-upright)
+  // dizzy stars orbit his head (which is at the bottom when he's upside down)
   if (s.dizzyT > 0) {
+    const sy = s.ko ? s.y + 14 : s.y - 34
     for (let i = 0; i < 3; i++) {
       const a = t * 5 + (i / 3) * TAU
-      star(ctx, s.x + Math.cos(a) * 16, s.y - 34 + Math.sin(a) * 5, 4, '#ffd166')
+      star(ctx, s.x + Math.cos(a) * 18, sy + Math.sin(a) * 5, 4, '#ffd166')
     }
   }
 }

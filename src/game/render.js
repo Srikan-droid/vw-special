@@ -1,7 +1,7 @@
 import { mix, lerp, clamp01, easeOutBack, rrect, circle, poly, stroke, glow, heartPath, star, pill, FONT, TAU } from './draw-utils'
 import { drawSrikant, drawAliva } from './characters'
 
-// Sky palettes: sunset → dusk → night → finale night
+// Sky palettes: sunset → dusk → night → knockout night
 const SKIES = [
   ['#5b6fd6', '#f49ac1', '#ffd29e'],
   ['#3a3f8f', '#c86fa8', '#ffad8a'],
@@ -226,7 +226,7 @@ function drawBlock(ctx, b) {
   ctx.restore()
 }
 
-export function drawThrowable(ctx, type, x, y, angle, t) {
+export function drawThrowable(ctx, type, x, y, angle) {
   ctx.save()
   ctx.translate(x, y)
   ctx.rotate(angle)
@@ -262,15 +262,6 @@ export function drawThrowable(ctx, type, x, y, angle, t) {
     circle(ctx, 0, 0, 11, '#4a4a5c')
     circle(ctx, -2, -1, 6, '#ffffff')
     circle(ctx, -1, 0, 3, '#ffc93c')
-  } else if (type === 'heart') {
-    glow(ctx, 0, 0, 40, '255,90,140', 0.6 + 0.2 * Math.sin(t * 10))
-    ctx.fillStyle = '#ff4d7d'
-    heartPath(ctx, 0, 2, 30)
-    ctx.fill()
-    ctx.fillStyle = 'rgba(255,255,255,0.6)'
-    ctx.beginPath()
-    ctx.ellipse(-6, -4, 4, 2.5, -0.6, 0, TAU)
-    ctx.fill()
   }
   ctx.restore()
 }
@@ -301,10 +292,6 @@ function drawParticles(ctx, g) {
       ctx.fillStyle = q.color
       ctx.fillRect(-q.size / 2, -q.size / 3, q.size, q.size * 0.66)
       ctx.restore()
-    } else if (q.kind === 'heart') {
-      ctx.fillStyle = q.color
-      heartPath(ctx, q.x, q.y, q.size)
-      ctx.fill()
     } else if (q.kind === 'star') star(ctx, q.x, q.y, q.size, q.color)
     else if (q.kind === 'pop' || q.kind === 'text') {
       const age = q.max - q.life
@@ -386,7 +373,7 @@ export function render(ctx, g) {
   drawBackdrop(ctx, g)
   drawGround(ctx, g)
   for (const b of g.blocks) drawBlock(ctx, b)
-  for (const p of g.projectiles) drawThrowable(ctx, p.type, p.body.position.x, p.body.position.y, p.body.angle, g.t)
+  for (const p of g.projectiles) drawThrowable(ctx, p.type, p.body.position.x, p.body.position.y, p.body.angle)
 
   const sk = g.srikant
   drawSrikant(
@@ -394,21 +381,19 @@ export function render(ctx, g) {
     {
       x: sk.body.position.x,
       y: sk.body.position.y,
-      angle: sk.body.angle,
+      angle: sk.body.angle + (sk.ko ? Math.sin(g.t * 3) * 0.06 : 0),
       mood: sk.mood,
       headphones: sk.headphones,
       bumps: sk.bumps,
-      bandaged: sk.bandaged,
       dizzyT: sk.dizzyT,
-      sign: sk.sign,
+      ko: sk.ko,
     },
     g.t,
   )
 
   const hand = drawAliva(ctx, g.aliva, g.t)
   g.handPos = hand
-  if (g.ready && g.nextType) drawThrowable(ctx, g.nextType, hand.x, hand.y - 4, -0.4, g.t)
-  if (g.heart) drawThrowable(ctx, 'heart', g.heart.x, g.heart.y, 0, g.t)
+  if (g.ready && g.nextType) drawThrowable(ctx, g.nextType, hand.x, hand.y - 4, -0.4)
   drawAim(ctx, g, hand)
   drawParticles(ctx, g)
 

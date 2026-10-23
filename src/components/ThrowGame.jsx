@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { createGame } from '../game/engine'
-import { THROWABLES, FINALE } from '../game/levels'
+import { THROWABLES } from '../game/levels'
 import { initAudio, startMusic, setMuted, isMuted } from '../game/audio'
 import './ThrowGame.css'
 
@@ -11,7 +11,7 @@ function ThrowGame() {
   const gameRef = useRef(null)
   const toastTimer = useRef(null)
   const bannerTimer = useRef(null)
-  const [phase, setPhase] = useState('title') // title → play → finale → forgiven
+  const [phase, setPhase] = useState('title') // title → play → ko
   const [hud, setHud] = useState(null)
   const [toast, setToast] = useState(null)
   const [banner, setBanner] = useState(null)
@@ -73,8 +73,8 @@ function ThrowGame() {
       {phase !== 'title' && hud && (
         <div className="tg-hud">
           <div className="tg-level">
-            <b>{phase === 'play' ? `LEVEL ${hud.level + 1}` : 'FINAL'}</b>
-            <span>{phase === 'play' ? hud.levelName : 'One last throw'}</span>
+            <b>{phase === 'play' ? `LEVEL ${hud.level + 1}` : 'K.O.'}</b>
+            <span>{phase === 'play' ? hud.levelName : 'Srikant is down'}</span>
           </div>
           <div className="tg-row">
             <div className="tg-queue" aria-label="Things left to throw">
@@ -83,7 +83,7 @@ function ThrowGame() {
                   {THROWABLES[t]?.emoji}
                 </span>
               ))}
-              {phase !== 'play' && <span className="tg-next">💗</span>}
+              {phase !== 'play' && <span className="tg-next">🏆</span>}
             </div>
             {phase === 'play' && (
               <div className="tg-bonks" aria-label={`${hud.bonks} of ${hud.need} bonks`}>
@@ -120,8 +120,6 @@ function ThrowGame() {
         </div>
       )}
 
-      {phase === 'finale' && <div className="tg-prompt">{FINALE.prompt}</div>}
-
       {banner && (
         <div className="tg-banner">
           <small>LEVEL {banner.level}</small>
@@ -154,7 +152,7 @@ function ThrowGame() {
         </div>
       )}
 
-      {phase === 'forgiven' && letter && !letterOpen && (
+      {phase === 'ko' && letter && !letterOpen && (
         <button type="button" className="tg-reopen" onClick={() => setLetterOpen(true)}>
           💌 read his letter
         </button>
@@ -185,7 +183,7 @@ function ThrowGame() {
             </div>
             <div className="tg-letter-actions">
               <button type="button" className="tg-btn" onClick={() => setLetterOpen(false)}>
-                Watch the fireworks ✨
+                Look at him 😂
               </button>
               <button type="button" className="tg-link" onClick={start}>
                 bonk him again ↺

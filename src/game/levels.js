@@ -62,7 +62,6 @@ export const LEVELS = [
       { x: 445, yb: 230, w: 74, h: 34, mat: 'glass', text: 'HANDS OFF' },
     ],
     hitLines: ["I'll kiss you first. Every time. 😘", 'Hugs first. From me. Always!', "I'll tease you till you laugh 😭"],
-    outro: "I'll make the first move. Always. 🏳️",
   },
 ]
 
@@ -70,11 +69,11 @@ export const ALIVA_LINES = ['hmph 😤', 'deserved 💅', 'again? 🙂', 'say so
 
 export const REFILL_LINE = 'here… take more. I deserve it 🥲'
 
-export const FINALE = {
-  sign: ["I'M SORRY,", 'ALIVA 🥺'],
-  line: "I'm sorry, Guluru. For real this time.",
-  prompt: 'One last throw… 💗',
-  caughtLine: 'Come here. Kissing you first 😘',
-  alivaLine: '…okay. come here 💗',
-  toast: { icon: '😘', title: 'Srikant', text: 'sending a kiss… first, for once' },
+// The ending: last bonk sends him flying head-first into the ground
+export const KO = {
+  pop: 'K.O.!',
+  flyLine: 'WAAAH 😱',
+  srikantLine: 'mmph… okay… I deserved that 🥴',
+  alivaLine: "hmph. now we're even 💅",
+  toast: { icon: '🏆', title: 'Aliva wins', text: 'Flawless victory. Srikant: 0' },
 }

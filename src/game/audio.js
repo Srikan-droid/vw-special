@@ -69,7 +69,6 @@ function noise(dur, vol = 0.2, freq = 800) {
 }
 
 export const sfx = {
-  firework: () => noise(0.45, 0.1, 1200),
   whoosh: () => {
     noise(0.28, 0.14, 900)
     tone(320, 0.25, { type: 'sine', vol: 0.05, to: 140 })
@@ -91,8 +90,6 @@ export const sfx = {
   },
   refill: () => [784, 988, 1175].forEach((f, i) => tone(f, 0.14, { type: 'triangle', vol: 0.1, at: i * 0.07 })),
   cheer: () => [659, 784, 988, 1319].forEach((f, i) => tone(f, 0.2, { type: 'square', vol: 0.04, at: i * 0.08 })),
-  win: () =>
-    [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, 0.35, { type: 'triangle', vol: 0.12, at: i * 0.11 })),
 }
 
 // 32-step loop of eighth notes (0 = rest)
