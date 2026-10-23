@@ -1,8 +1,11 @@
-# I'm Sorry, Guluru 🥺 — React
+# Guluru's Revenge 🩴 — React
 
-A one-screen mobile game: tap the floating gifts to stitch a broken heart back together (12 stitches), watch the storm clear, then answer one very important question.
+A one-screen, Angry Birds-style apology game. Aliva drags back and flings chappals, pillows, teddies and a frying pan at Srikant, who hides behind forts built from his flaws (DUMB, DOESN'T EXPRESS, NEVER TEXTS FIRST…). Every bonk knocks a sorry out of him. Three levels, then one last throw (a heart) and a letter.
 
-Everything lives in `src/components/SorryGame.jsx` (apology lines, letter text and tuning constants are at the top of the file).
+- All wording (levels, flaw labels, his sorry lines, finale) lives in `src/game/levels.js`.
+- The letter text is in `src/components/ThrowGame.jsx`.
+- Physics: matter-js. Sounds are synthesized with WebAudio (no audio files).
+- Add `?autoplay` to the URL to let the game aim for you (used for testing).
 
 ## Run locally
 

@@ -1,7 +1,7 @@
-import SorryGame from './components/SorryGame'
+import ThrowGame from './components/ThrowGame'
 
 function App() {
-  return <SorryGame />
+  return <ThrowGame />
 }
 
 export default App
