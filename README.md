@@ -1,6 +1,6 @@
 # Guluru's Revenge 🩴 — React
 
-A one-screen, Angry Birds-style apology game. Aliva drags back and flings chappals, pillows, teddies and a frying pan at Srikant, who hides behind forts built from his flaws (DUMB, DOESN'T EXPRESS, NEVER TEXTS FIRST…). Every bonk knocks a sorry out of him. Three levels, then one last throw (a heart) and a letter.
+A one-screen, Angry Birds-style apology game. Aliva drags back and flings chappals, pillows, teddies and a frying pan at Srikant, who hides behind forts built from his flaws (DUMB, DOESN'T EXPRESS, NEVER KISSES FIRST…). Every bonk knocks a sorry out of him. Three levels, then one last throw (a heart) and a letter.
 
 - All wording (levels, flaw labels, his sorry lines, finale) lives in `src/game/levels.js`.
 - The letter text is in `src/components/ThrowGame.jsx`.

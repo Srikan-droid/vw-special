@@ -171,16 +171,16 @@ function ThrowGame() {
             <div className="tg-letter-body">
               <p>Dear Aliva,</p>
               <p>
-                You were right. I can be a bit dumb, I don&apos;t say what I feel, and I wait for you to make the first
-                move far too often. You deserve so much more than &ldquo;hmm&rdquo; and &ldquo;ok&rdquo;.
+                I know I have said sorry already but there is only so much thing I can do from here. But if I were
+                there with you, you&apos;d never have been angry with me for this long. I&apos;d have definitely kissed
+                you and teased you and danced for you awkwardly or made some good food for you to mend things.
               </p>
               <p>
-                So here I am, saying it out loud: I&apos;m sorry. I love you more than I ever manage to show, and
-                I&apos;m going to start showing it. I&apos;ll text first. I&apos;ll plan things. I&apos;ll tell you
-                what&apos;s going on in my head instead of making you guess.
+                It&apos;s already difficult staying away from you, please don&apos;t stay mad at me anymore and deprive
+                me of the daily opportunity to look at your beautiful laughing face.
               </p>
-              <p>Thank you for being patient with this idiot. Keep a chappal ready for whenever I forget. 🩴</p>
-              <p>I love you, Guluru.</p>
+              <p>I am blessed to have you in my life and I will be lucky to marry you one day.</p>
+              <p>Love ya ❤️</p>
               <p className="tg-signoff">Srikant 💌</p>
             </div>
             <div className="tg-letter-actions">

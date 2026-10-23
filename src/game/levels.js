@@ -11,8 +11,8 @@ export const THROWABLES = {
 export const LEVELS = [
   {
     name: 'The Wall of Dumb',
-    sub: "He hides behind 'ok' and 'hmm'",
-    toast: { icon: '📱', title: 'Srikant', text: 'hmm' },
+    sub: 'Misses every single hint',
+    toast: { icon: '🧠', title: "Srikant's brain", text: 'loading… 3% 🐌' },
     intro: '…hi? 😅',
     srikant: { x: 460, yb: 0 },
     bonksNeeded: 1,
@@ -20,16 +20,16 @@ export const LEVELS = [
     blocks: [
       { x: 405, yb: 0, w: 30, h: 100, mat: 'wood', text: 'DUMB' },
       { x: 515, yb: 0, w: 30, h: 100, mat: 'wood', text: 'DUMB (AGAIN)' },
-      { x: 460, yb: 100, w: 170, h: 26, mat: 'wood', text: 'SAYS "OK" TO EVERYTHING' },
-      { x: 460, yb: 126, w: 110, h: 42, mat: 'glass', text: 'REPLIES "HMM"' },
+      { x: 460, yb: 100, w: 170, h: 26, mat: 'wood', text: 'MISSES EVERY HINT' },
+      { x: 460, yb: 126, w: 110, h: 42, mat: 'glass', text: 'CLUELESS' },
     ],
-    hitLines: ["Okay okay, I'm dumb 🥲", 'Deserved. Fully deserved.', 'Ow! …ok. I mean, SORRY!'],
-    outro: "No more 'hmm'. Promise 🏳️",
+    hitLines: ["Okay okay, I'm dumb 🥲", 'Deserved. Fully deserved.', 'Ow! …okay, I get it now!'],
+    outro: "I'll catch every hint. Promise 🏳️",
   },
   {
     name: 'The Tower of Not Expressing',
     sub: 'Headphones on, feelings off',
-    toast: { icon: '📱', title: 'Srikant', text: '👍' },
+    toast: { icon: '🎧', title: 'Now playing', text: 'Avoiding My Feelings · Srikant' },
     intro: "🎧 la la la… can't hear you",
     srikant: { x: 465, yb: 136, headphones: true },
     bonksNeeded: 2,
@@ -45,28 +45,28 @@ export const LEVELS = [
   },
   {
     name: 'The Castle of Never Initiating',
-    sub: 'Waits for you. Every. Single. Time.',
-    toast: { icon: '📱', title: 'Srikant', text: '(online · not typing)' },
-    intro: '*waits for you to text first*',
+    sub: 'Never kisses first. Never teases first.',
+    toast: { icon: '🙈', title: 'Srikant', text: 'is too shy to hug first' },
+    intro: '*waits for you to hug first*',
     srikant: { x: 445, yb: 126 },
     bonksNeeded: 3,
     ammo: ['chappal', 'pillow', 'pan', 'teddy', 'chappal', 'pillow', 'chappal'],
     blocks: [
       { x: 365, yb: 0, w: 30, h: 100, mat: 'stone', text: 'INITIATES LESS' },
-      { x: 445, yb: 0, w: 30, h: 100, mat: 'wood', text: 'LATER' },
-      { x: 525, yb: 0, w: 30, h: 100, mat: 'stone', text: 'MAYBE' },
-      { x: 445, yb: 100, w: 200, h: 26, mat: 'wood', text: 'WAITS FOR YOU TO PLAN' },
-      { x: 395, yb: 126, w: 26, h: 80, mat: 'wood', text: '"YOU DECIDE"' },
-      { x: 495, yb: 126, w: 26, h: 80, mat: 'wood', text: 'SEEN ✓✓' },
-      { x: 445, yb: 206, w: 130, h: 24, mat: 'wood', text: 'NEVER TEXTS FIRST' },
-      { x: 445, yb: 230, w: 74, h: 34, mat: 'glass', text: 'NO PLANS' },
+      { x: 445, yb: 0, w: 30, h: 100, mat: 'wood', text: 'SHY 🙈' },
+      { x: 525, yb: 0, w: 30, h: 100, mat: 'stone', text: 'AWKWARD' },
+      { x: 445, yb: 100, w: 200, h: 26, mat: 'wood', text: 'NEVER KISSES FIRST' },
+      { x: 395, yb: 126, w: 26, h: 80, mat: 'wood', text: 'NO HUGS' },
+      { x: 495, yb: 126, w: 26, h: 80, mat: 'wood', text: 'NO CUDDLES' },
+      { x: 445, yb: 206, w: 130, h: 24, mat: 'wood', text: 'NEVER TEASES FIRST' },
+      { x: 445, yb: 230, w: 74, h: 34, mat: 'glass', text: 'HANDS OFF' },
     ],
-    hitLines: ["I'll text first. Every day. Promise.", "I'll plan the next date!", 'Good morning texts. Daily. 😭'],
+    hitLines: ["I'll kiss you first. Every time. 😘", 'Hugs first. From me. Always!', "I'll tease you till you laugh 😭"],
     outro: "I'll make the first move. Always. 🏳️",
   },
 ]
 
-export const ALIVA_LINES = ['hmph 😤', 'deserved 💅', 'again? 🙂', 'say sorry properly!', 'that one was for "hmm"', 'hehe 😌']
+export const ALIVA_LINES = ['hmph 😤', 'deserved 💅', 'again? 🙂', 'say sorry properly!', 'that one was for no kisses 😤', 'hehe 😌']
 
 export const REFILL_LINE = 'here… take more. I deserve it 🥲'
 
@@ -74,7 +74,7 @@ export const FINALE = {
   sign: ["I'M SORRY,", 'ALIVA 🥺'],
   line: "I'm sorry, Guluru. For real this time.",
   prompt: 'One last throw… 💗',
-  caughtLine: 'I love you, Guluru 🥹',
+  caughtLine: 'Come here. Kissing you first 😘',
   alivaLine: '…okay. come here 💗',
-  toast: { icon: '📱', title: 'Srikant', text: 'typing… (for once)' },
+  toast: { icon: '😘', title: 'Srikant', text: 'sending a kiss… first, for once' },
 }
